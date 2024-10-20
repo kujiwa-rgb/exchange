@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crypto Exchange</title>
+    <link rel="stylesheet" href="/styles-main.css">
+</head>
+<body>
+    <div class="background-svg">
+        <img src="/bitcoin-mechanic.svg" alt="Bitcoin Logo" />
+    </div>
+
+    <!-- Header Section -->
+    <header>
+        <img src="/arrange-circle.svg" alt="Crypto Exchange Logo" class="header-logo"><h1>BLUE CRYPTO GROUP</h1>
+    </header>
+    
+
+<!-- Main Content Section -->
+<main>
+    <!-- Tabs Section -->
+    <div class="tabs">
+        <nav>
+            <% if (!username) { %>
+                <a href="/signup" class="tab-link">
+                    <img src="/edit.svg" alt="Signup Icon">Signup
+                </a>
+                <a href="/login" class="tab-link">
+                    <img src="/enter.svg" alt="Login Icon">Login
+                </a>
+            <% } else { %>
+                <a href="/logout" class="tab-link">
+                    <img src="/exit.svg" alt="Logout Icon">Logout
+                </a>
+            <% } %>
+        </nav>
+
+        <button class="tab-link active" data-tab="home">
+            <img src="/home.svg" alt="Home Icon">Home
+        </button>
+        <button class="tab-link" data-tab="deposit">
+            <img src="/sign-plus.svg" alt="Deposit Icon">Deposit
+        </button>
+        <button class="tab-link" data-tab="withdraw">
+            <img src="/sign-minus.svg" alt="Withdraw Icon">Withdraw
+        </button>
+        <button class="tab-link" data-tab="spot">
+            <img src="/trend-up.svg" alt="Spot Icon">Spot
+        </button>
+        <button class="tab-link" data-tab="settings">
+            <img src="/gear-settings.svg" alt="Settings Icon">Settings
+        </button>
+    </div>
+
+    <!-- Tab Contents -->
+    <div class="tab-content-container">
+         <!-- Home Tab Content -->
+        <div id="home" class="tab-content active">
+            <h2>Home</h2>
+            <% if (username) { %>
+                <p>Hello, <%= username %>! Welcome back to your dashboard.</p>
+            <% } else { %>
+                <p>Welcome to the Crypto Exchange. Please sign up or log in to access all features.</p>
+            <% } %>
+            <div class="balance-container">
+                <p class="balance-text">Your current balance:</p>
+                <p class="balance-amount"> <span id="user-balance">$<%= userBalance %></span></p>
+            </div>
+      
+            <!-- Cryptocurrency List -->
+            <div id="widget-area">
+            <div class="crypto-list">
+                <h3>Top Cryptocurrencies</h3>
+                <ul id="crypto-list">
+                    <% if (cryptoData && cryptoData.length > 0) { %>
+                        <% cryptoData.forEach(crypto => { %>
+                            <li>
+                                <div class="crypto-item">
+                                    <img src="<%= crypto.image %>" alt="<%= crypto.name %> logo">
+                                    <span class="crypto-name"><%= crypto.name %> (<%= crypto.symbol.toUpperCase() %>)</span>
+                                    <span class="crypto-price">Price: $<%= crypto.current_price.toFixed(2) %></span>
+                                    <span class="crypto-change">Change: <%= crypto.price_change_percentage_24h.toFixed(2) %>%</span>
+                                </div>
+                            </li>
+                        <% }); %>
+                    <% } else { %>
+                        <li>No cryptocurrency data available at the moment.</li>
+                    <% } %>
+                </ul>
+            </div>
+            </div>
+        </div>
+
+       
+        <!-- Deposit Tab Content -->
+        <div id="deposit" class="tab-content">
+        <h2>Deposit</h2>
+     <% if (username) { %>
+        <p>Select the cryptocurrency you would like to deposit:</p>
+        <div class="crypto-selection">
+            <button class="crypto-btn" data-crypto="btc">
+                <img src="/bitcoin.png" alt="Bitcoin Icon">Bitcoin (BTC)
+            </button>
+            <button class="crypto-btn" data-crypto="eth">
+                <img src="/ethereum.svg" alt="Ethereum Icon">Ethereum (ETH)
+            </button>
+        </div>
+        <!-- Crypto Details -->
+        <div id="crypto-details" style="display: none;">
+            <h3 id="crypto-name"></h3>
+            <p>Send funds to the following address:</p>
+            <p id="wallet-address" class="wallet-address"></p>
+            <div id="qr-code"></div>
+        </div>
+         <% } else { %>
+        <p>You must be logged in to access this feature. <a href="/login">Login here</a>.</p>
+        <% } %>
+        </div>
+        <!-- Withdraw Tab Contents -->
+        <div id="withdraw" class="tab-content">
+            <h2>Withdraw</h2>
+            <% if (username) { %>
+                <p>Available Balance to Withdraw: <span id="user-balance">$<%= userBalance %></span></p>
+                <form id="withdraw-form">
+                    <label for="crypto-select">Select Cryptocurrency:</label>
+                    <div class="custom-select">
+                        <div class="select-selected" id="selected-crypto" data-crypto="btc" data-price="btc">
+                            <img src="/bitcoin.png" alt="Bitcoin Icon" width="24"> Bitcoin (BTC)
+                        </div>
+                        <div class="select-items select-hide">
+                            <div class="select-option" data-crypto="btc">
+                                <img src="/bitcoin.png" alt="Bitcoin Icon" width="24"> Bitcoin (BTC)
+                            </div>
+                            <div class="select-option" data-crypto="eth">
+                                <img src="/ethereum.svg" alt="Ethereum Icon" width="24"> Ethereum (ETH)
+                            </div>
+                        </div>
+                    </div>
+        
+                    <div class="withdraw-amount-section">
+                        <label for="withdraw-amount">Amount to Withdraw:</label>
+                        <input type="number" id="withdraw-amount" name="amount" min="0" step="0.0001" required>
+                    </div>
+        
+                    <div class="withdraw-address-section">
+                        <label for="withdraw-address">Withdrawal Address:</label>
+                        <input type="text" id="withdraw-address" name="address" placeholder="Enter your wallet address" required>
+                    </div>
+        
+                    <!-- Error message section -->
+                    <p id="withdraw-error" style="color: red; display: none;">Insufficient Balance!</p>
+        
+                    <button type="submit" class="withdraw-btn">Submit Withdrawal</button>
+                </form>
+            <% } else { %>
+                <p>You must be logged in to access this feature. <a href="/login">Login here</a>.</p>
+            <% } %>
+        </div>
+        <!-- Spot Tab Contents -->
+        <div id="spot" class="tab-content">
+            <h2>Spot Trading</h2>
+            <% if (username) { %>
+            <!-- Trading Pair Selection -->
+            <div class="pair-selection">
+                <button class="pair-button" data-pair="btc-usd">
+                    <img src="/bitcoin.png" alt="Bitcoin Icon" width="24"> BTC/USD
+                </button>
+                <button class="pair-button" data-pair="eth-usd">
+                    <img src="/ethereum.svg" alt="Ethereum Icon" width="24"> ETH/USD
+                </button>
+                <!-- Add more pairs as needed -->
+            </div>
+            <!-- Pair Info and Order Book Container -->
+            <div class="pair-info-container">
+                <!-- Left Section with Selected Pair Info and PnL -->
+                <div class="left-section">
+                    <div class="selected-pair-info">
+                        <h3 id="selected-pair-name">Select a trading pair</h3>
+                        <div class="price-info" style="display: none;">
+                            <p>Balance: <span id="user-balance">$<%= userBalance %></span></p>
+                            <p id="bid-price">Bid Price: </p>
+                            <p id="ask-price">Ask Price: </p>
+                        </div>
+                        <!-- Trade Amount Input -->
+                        <div class="trade-amount" style="display: none;">
+                            <label for="trade-amount-input">Amount to Trade:</label>
+                            <input type="number" id="trade-amount-input" min="0.01" step="0.01">
+                        </div>
+                        <!-- Leverage Selection -->
+                        <div class="leverage-selection" style="display: none;">
+                            <p>Select Leverage:</p>
+                            <button class="leverage-button" data-leverage="10x">10x</button>
+                            <button class="leverage-button" data-leverage="50x">50x</button>
+                            <button class="leverage-button" data-leverage="100x">100x</button>
+                        </div>
+                        <!-- Buy and Sell Buttons -->
+                        <div class="buy-sell-buttons" style="display: none;">
+                            <button id="buy-button" class="trade-button">Buy</button>
+                            <button id="sell-button" class="trade-button">Sell</button>
+                        </div>
+                    </div>
+            
+                    <!-- PnL, Open Trades, and Closed Trades Container -->
+                    <div id="trade-info-container" class="trade-info-container">
+                        <!-- PnL -->
+                        <div id="user-pnl" class="trade-info">
+                            <h4>PnL</h4>
+                            <ul id="user-pnl-list" class="pnl-list"></ul>
+                        </div>
+                        <!-- Open Trades -->
+                        <div id="open-trades" class="trade-info">
+                            <h4>Open Trades</h4>
+                            <ul id="open-trades-list" class="trades-list"></ul>
+                        </div>
+                        <!-- Closed Trades -->
+                        <div id="closed-trades" class="trade-info">
+                            <h4>Closed Trades</h4>
+                            <ul id="closed-trades-list" class="trades-list"></ul>
+                        </div>
+                    </div>
+                </div>
+            
+                <!-- Order Book -->
+                <div id="order-book" class="order-book-section">
+                    <h4>Order Book</h4>
+                    <div id="buy-orders" class="orders buy-orders">
+                        <h4>Buy Orders</h4>
+                        <ul id="buy-order-list"></ul>
+                    </div>
+                    <div id="sell-orders" class="orders sell-orders">
+                        <h4>Sell Orders</h4>
+                        <ul id="sell-order-list"></ul>
+                    </div>
+                </div>
+            </div>            
+            <% } else { %>
+            <p style="text-align: center; margin-top: 20px;">You must be logged in to access this feature. <a href="/login">Login here</a>.</p>
+            <% } %>
+        </div>
+        
+    </div>          
+</main>
+
+    <!-- Footer Section -->
+    <footer>
+        <p>&copy; 2024 Blue Crypto Group Ltd. All rights reserved.</p>
+        <p><a href="/policy">Policy</a> | <a href="/terms">Terms of Agreement</a></p>
+    </footer>
+
+    <script src="/script.js"></script>
+</body>
+</html>
